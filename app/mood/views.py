@@ -1,9 +1,9 @@
 from flask import Blueprint, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
-from ..models import Mood
+from ..models import Mood, db
 from ..response_helpers import error_response, success_response
-from ..utils import *
+from ..utils import call_chatgpt
 
 mood_bp = Blueprint('mood', __name__)
 
