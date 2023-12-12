@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
-from ..models import Med, Clarification, News, SavedMed, SavedNew, SavedClarification, db
+from ..models import Pharmacy, Med, Clarification, News, SavedMed, SavedNew, SavedClarification, db
 
 from ..response_helpers import error_response, success_response
 
@@ -17,6 +17,8 @@ def get_opendata(class_id, data_id):
         data = News.query.get(data_id)
     elif class_id == 3:
         data = Clarification.query.get(data_id)
+    elif class_id == 4:
+        data = Pharmacy.query.get(data_id)
     else:
         return error_response('類型編號錯誤')
 
@@ -31,6 +33,8 @@ def get_opendata_list(class_id):
         data = News.query.all()
     elif class_id == 3:
         data = Clarification.query.all()
+    elif class_id == 4:
+        data = Pharmacy.query.all()
     else:
         return error_response('類型編號錯誤')
 
