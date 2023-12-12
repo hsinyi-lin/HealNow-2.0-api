@@ -1,11 +1,9 @@
-from flask import Blueprint, request, jsonify, current_app
+from flask import Blueprint, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
-from ..models import Mood, db
-
-import openai
-
+from ..models import Mood
 from ..response_helpers import error_response, success_response
+from ..utils import *
 
 mood_bp = Blueprint('mood', __name__)
 
@@ -20,19 +18,8 @@ def add_mood():
     if not content:
         return error_response()
 
-    openai.api_key = current_app.config['OPENAI_API_KEY']
-
-    completion = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {"role": "system", "content": "你是一位會用一句話給予鼓勵的心理諮商師"},
-            {"role": "user", "content": content}
-        ]
-    )
-
-    response_message = completion['choices'][0]['message']['content'].strip()
-
-    new_post = Mood(content=content, email=email, ai_reply=response_message)
+    ai_reply = call_chatgpt(content)
+    new_post = Mood(content=content, email=email, ai_reply=ai_reply)
 
     db.session.add(new_post)
     db.session.commit()
