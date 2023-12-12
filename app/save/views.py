@@ -3,6 +3,8 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 from sqlalchemy import desc
 
 from app.models import SavedPost, db
+from ..response_helpers import error_response, success_response
+
 
 save_bp = Blueprint('saves', __name__)
 
@@ -18,9 +20,9 @@ def save_post(post_id):
         db.session.add(new_post)
         db.session.commit()
     except:
-        return jsonify({'message': '已新增'}), 200
+        return error_response('已新增')
 
-    return jsonify({'message': '成功'}), 200
+    return success_response()
 
 
 @save_bp.route('/<int:post_id>', methods=['DELETE'])
@@ -33,9 +35,9 @@ def unsave_post(post_id):
     if saved_post:
         db.session.delete(saved_post)
         db.session.commit()
-        return jsonify({'message': '成功'}), 200
+        return success_response()
     else:
-        return jsonify({'message': '已取消'}), 200
+        return error_response('已取消')
 
 
 @save_bp.route('', methods=['GET'])
@@ -45,15 +47,15 @@ def get_saved_posts_list():
 
     saved_posts = SavedPost.query.filter_by(email=email).order_by(desc(SavedPost.id))
 
-    return jsonify({
-        'data': [
-            {
-                'id': saved_post.id,
-                'email': saved_post.email,
-                'title': saved_post.post.title,
-                'content': saved_post.post.content,
-                'created_time': saved_post.post.created_time,
-                'updated_time': saved_post.post.updated_time,
-            } for saved_post in saved_posts
-        ]
-    }), 200
+    data = [
+        {
+            'id': saved_post.id,
+            'email': saved_post.email,
+            'title': saved_post.post.title,
+            'content': saved_post.post.content,
+            'created_time': saved_post.post.created_time,
+            'updated_time': saved_post.post.updated_time,
+        } for saved_post in saved_posts
+    ]
+
+    return success_response(data=data)
