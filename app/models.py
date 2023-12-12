@@ -16,6 +16,10 @@ class Clarification(db.Model):
     url = Column(Text)
     publish_date = Column(Date)
 
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
+
 
 class Med(db.Model):
     __tablename__ = 'med'
@@ -37,6 +41,10 @@ class Med(db.Model):
     applicant_name = Column(String)
     applicant_address = Column(String)
 
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
+
 
 class News(db.Model):
     __tablename__ = 'news'
@@ -46,6 +54,10 @@ class News(db.Model):
     content = Column(Text)
     url = Column(Text)
     publish_date = Column(Date)
+
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 
 
 class Pharmacy(db.Model):
@@ -62,6 +74,9 @@ class Pharmacy(db.Model):
     full_address = Column(String)
     latitude = Column(Numeric)
     longitude = Column(Numeric)
+
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 
 class User(db.Model):
@@ -122,6 +137,9 @@ class SavedClarification(db.Model):
     clarification = relationship('Clarification')
     user = relationship('User')
 
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 
 class SavedMed(db.Model):
     __tablename__ = 'saved_med'
@@ -133,6 +151,10 @@ class SavedMed(db.Model):
     user = relationship('User')
     med = relationship('Med')
 
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
+
 
 class SavedNew(db.Model):
     __tablename__ = 'saved_news'
@@ -143,6 +165,10 @@ class SavedNew(db.Model):
 
     user = relationship('User')
     news = relationship('News')
+
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 
 
 class SavedPost(db.Model):

@@ -75,7 +75,6 @@ def get_post(post_id):
     if not post:
         return jsonify({'message': '沒有此貼文'}), 404
 
-    # 返回帖子的信息，例如 title 和 content
     return jsonify({
         'id': post.id,
         'email': post.email,

@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from flask import Blueprint, request, jsonify, current_app
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
@@ -7,6 +5,7 @@ from ..models import Mood, db
 
 import openai
 
+from ..response_helpers import error_response, success_response
 
 mood_bp = Blueprint('mood', __name__)
 
@@ -19,7 +18,7 @@ def add_mood():
     content = data.get('content')
 
     if not content:
-        return 'Title and content are required', 400
+        return error_response()
 
     openai.api_key = current_app.config['OPENAI_API_KEY']
 
@@ -38,7 +37,7 @@ def add_mood():
     db.session.add(new_post)
     db.session.commit()
 
-    return 'Post added successfully', 200
+    return success_response()
 
 
 @mood_bp.route('/<int:mood_id>', methods=['DELETE'])
@@ -52,9 +51,9 @@ def delete_mood(mood_id):
         db.session.delete(mood)
         db.session.commit()
     else:
-        return '不存在', 404
+        return error_response(msg='不存在')
 
-    return 'Post added successfully', 200
+    return success_response()
 
 
 @mood_bp.route('', methods=['GET'])
@@ -64,17 +63,15 @@ def get_mood_list():
 
     moods = Mood.query.filter_by(email=email)
 
-    return jsonify({
-        'success': True,
-        'msg': '成功',
-        'data': [
-            {
-                'id': mood.id,
-                'email': mood.email,
-                'content': mood.content,
-                'ai_reply': mood.ai_reply,
-                'created_time': mood.created_time
-            } for mood in moods
-        ]
-    }), 200
+    data = [
+        {
+            'id': mood.id,
+            'email': mood.email,
+            'content': mood.content,
+            'ai_reply': mood.ai_reply,
+            'created_time': mood.created_time
+        } for mood in moods
+    ]
+
+    return success_response(data=data)
 

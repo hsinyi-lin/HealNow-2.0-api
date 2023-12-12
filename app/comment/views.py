@@ -4,6 +4,7 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from ..models import Comment, Post, db
+from ..response_helpers import error_response, success_response
 
 comment_bp = Blueprint('comments', __name__)
 
@@ -17,19 +18,19 @@ def add_comment(post_id):
     content = data.get('content')
 
     if not content:
-        return jsonify({'message': '缺少欄位'}), 400
+        return error_response()
 
     post = Post.query.get(post_id)
 
     if not post:
-        return jsonify({'message': '不存在的貼文'}), 404
+        return error_response(msg='不存在的貼文')
 
     new_comment = Comment(post_id=post_id, content=content, email=email)
 
     db.session.add(new_comment)
     db.session.commit()
 
-    return jsonify({'message': '成功'}), 200
+    return success_response()
 
 
 @comment_bp.route('/<int:comment_id>', methods=['DELETE'])
@@ -42,9 +43,9 @@ def delete_comment(comment_id):
     if comment:
         db.session.delete(comment)
         db.session.commit()
-        return jsonify({'message': '成功'}), 200
+        return success_response()
     else:
-        return jsonify({'message': '沒有此回覆'}), 404
+        return error_response(msg='沒有此回覆')
 
 
 @comment_bp.route('/<int:comment_id>', methods=['PATCH'])
@@ -55,18 +56,18 @@ def edit_comment(comment_id):
     content = data.get('content')
 
     if not content:
-        return jsonify({'message': '缺少欄位'}), 400
+        return error_response()
 
     comment = Comment.query.filter_by(id=comment_id, email=email).first()
 
     if not comment:
-        return jsonify({'message': '沒有此回覆'}), 404
+        return error_response(msg='沒有此回覆')
 
     comment.content = content
     comment.updated_time = datetime.now()
     db.session.commit()
 
-    return jsonify({'message': '成功'}), 200
+    return success_response()
 
 
 @comment_bp.route('/<int:comment_id>', methods=['GET'])
@@ -74,12 +75,14 @@ def get_comment(comment_id):
     comment = Comment.query.get(comment_id)
 
     if not comment:
-        return jsonify({'message': '沒有此回覆'}), 404
+        return error_response(msg='沒有此回覆')
 
-    return jsonify({
+    data = {
         'id': comment.id,
         'post_id': comment.post_id,
         'content': comment.content,
         'created_time': comment.created_time,
         'updated_time': comment.updated_time
-    }), 200
+    }
+
+    return success_response(data=data)
