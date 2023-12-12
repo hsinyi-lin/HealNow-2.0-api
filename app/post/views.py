@@ -4,6 +4,8 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from ..models import Post, db, Comment
+from ..response_helpers import error_response, success_response
+
 
 post_bp = Blueprint('posts', __name__)
 
@@ -16,15 +18,15 @@ def add_post():
     title = data.get('title')
     content = data.get('content')
 
-    if not title or not content:
-        return jsonify({'message': '缺少欄位'}), 400
+    if not all([title, content]):
+        return error_response()
 
     new_post = Post(title=title, content=content, email=email)
 
     db.session.add(new_post)
     db.session.commit()
 
-    return jsonify({'message': '成功'}), 200
+    return success_response()
 
 
 @post_bp.route('/<int:post_id>', methods=['PATCH'])
@@ -35,13 +37,13 @@ def edit_post(post_id):
     title = data.get('title')
     content = data.get('content')
 
-    if not title or not content:
-        return jsonify({'message': '缺少欄位'}), 400
+    if not all([title, content]):
+        return error_response()
 
     post = Post.query.filter_by(id=post_id, email=email).first()
 
     if not post:
-        return jsonify({'message': '沒有此貼文'}), 404
+        return error_response(msg='沒有此貼文')
 
     post.title = title
     post.content = content
@@ -49,7 +51,7 @@ def edit_post(post_id):
 
     db.session.commit()
 
-    return jsonify({'message': '成功'}), 200
+    return success_response()
 
 
 @post_bp.route('/<int:post_id>', methods=['DELETE'])
@@ -60,12 +62,12 @@ def delete_post(post_id):
     post_to_delete = Post.query.filter_by(id=post_id, email=email).first()
 
     if not post_to_delete:
-        return jsonify({'message': '沒有此貼文'}), 404
+        return error_response(msg='沒有此貼文')
 
     db.session.delete(post_to_delete)
     db.session.commit()
 
-    return jsonify({'message': '成功'}), 200
+    return success_response()
 
 
 @post_bp.route('/<int:post_id>', methods=['GET'])
@@ -73,9 +75,9 @@ def get_post(post_id):
     post = Post.query.get(post_id)
 
     if not post:
-        return jsonify({'message': '沒有此貼文'}), 404
+        return error_response(msg='沒有此貼文')
 
-    return jsonify({
+    data = {
         'id': post.id,
         'email': post.email,
         'title': post.title,
@@ -91,7 +93,9 @@ def get_post(post_id):
                 'updated_time': comment.updated_time
             } for comment in Comment.query.filter_by(post_id=post_id)
         ]
-    }), 200
+    }
+
+    return success_response(data=data)
 
 
 @post_bp.route('', methods=['GET'])
@@ -100,6 +104,6 @@ def get_all_posts():
 
     posts_list = [post.as_dict() for post in posts]
 
-    return {'posts': posts_list}, 200
+    return success_response(data=posts_list)
 
 
