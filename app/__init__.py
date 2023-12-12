@@ -22,11 +22,13 @@ def create_app():
     from app.comment.views import comment_bp
     from app.save.views import save_bp
     from app.mood.views import mood_bp
+    from app.opendata.views import opendata_bp
 
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(post_bp, url_prefix='/posts')
     app.register_blueprint(comment_bp, url_prefix='/comments')
     app.register_blueprint(save_bp, url_prefix='/saves')
     app.register_blueprint(mood_bp, url_prefix='/moods')
+    app.register_blueprint(opendata_bp, url_prefix='/opendatas')
 
     return app
