@@ -12,6 +12,7 @@ flask-jwt-extended = "*"
 flask-mail = "*"
 psycopg2 = "*"
 openai = "==0.28"
+flask-cors = "*"
 
 [dev-packages]
 

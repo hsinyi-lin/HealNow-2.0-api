@@ -1,4 +1,6 @@
 from flask import Flask
+from flask_cors import CORS
+
 from config import Config
 from flask_mail import Mail
 from flask_jwt_extended import JWTManager
@@ -16,6 +18,8 @@ def create_app():
 
     mail = Mail(app)
     jwt = JWTManager(app)
+
+    CORS(app)
 
     from app.auth.views import auth_bp
     from app.post.views import post_bp
