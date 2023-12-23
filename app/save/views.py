@@ -49,7 +49,7 @@ def get_saved_posts_list():
 
     data = [
         {
-            'id': saved_post.id,
+            'post_id': saved_post.post_id,
             'email': saved_post.email,
             'title': saved_post.post.title,
             'content': saved_post.post.content,
