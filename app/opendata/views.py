@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from sqlalchemy import desc
 
 from ..models import Pharmacy, Med, Clarification, News, SavedMed, SavedNew, SavedClarification, db
 
@@ -94,15 +95,16 @@ def saved_opendata_list(class_id):
     email = get_jwt_identity()
 
     if class_id == 1:
-        data = SavedMed.query.filter_by(email=email).all()
+        data = SavedMed.query.filter_by(email=email).order_by(desc(SavedMed.id)).all()
+        data_list = [d.med.as_dict() for d in data]
     elif class_id == 2:
-        data = SavedNew.query.filter_by(email=email).all()
+        data = SavedNew.query.filter_by(email=email).order_by(desc(SavedNew.id)).all()
+        data_list = [d.news.as_dict() for d in data]
     elif class_id == 3:
-        data = SavedClarification.query.filter_by(email=email).all()
+        data = SavedClarification.query.filter_by(email=email).order_by(desc(SavedClarification.id)).all()
+        data_list = [d.clarification.as_dict() for d in data]
     else:
         return error_response('類型編號錯誤')
-
-    data_list = [d.as_dict() for d in data]
 
     return success_response(data=data_list)
 
