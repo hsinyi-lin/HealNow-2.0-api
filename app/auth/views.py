@@ -82,12 +82,22 @@ def verify_code():
 
 
 @auth_bp.route('/change_password', methods=['PATCH'])
-@jwt_required()
 def change_password():
-    email = get_jwt_identity()
-
     data = request.get_json()
+    is_login = data.get('is_login')
     new_password = data.get('new_password')
+
+    if is_login:
+        @jwt_required()
+        def get_email_from_jwt():
+            return get_jwt_identity()
+
+        email = get_email_from_jwt()
+    else:
+        try:
+            email = data['email']
+        except:
+            return error_response(msg='非登入狀態，缺少email欄位')
 
     user = User.query.filter_by(email=email).first()
     if user:
