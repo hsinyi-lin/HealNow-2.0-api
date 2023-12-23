@@ -72,7 +72,7 @@ def verify_code():
     if not all([email, code]):
         return error_response()
 
-    verification = Verification.query.filter_by(email=email).order_by(desc(Verification.created_time)).first()
+    verification = Verification.query.filter_by(email=email).order_by(desc(Verification.id)).first()
     print(verification)
 
     if code == verification.code:
