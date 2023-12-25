@@ -86,8 +86,12 @@ class User(db.Model):
     password = Column(String, nullable=False)
     username = Column(String, nullable=False)
     gender = Column(CHAR(1), nullable=False)
+    photo = Column(Text, nullable=True)
     created_time = Column(DateTime, nullable=False, default=datetime.now())
     updated_time = Column(DateTime, nullable=False, default=datetime.now())
+
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 
 class Verification(db.Model):

@@ -22,6 +22,7 @@ def create_app():
     CORS(app)
 
     from app.auth.views import auth_bp
+    from app.user.views import user_bp
     from app.post.views import post_bp
     from app.comment.views import comment_bp
     from app.save.views import save_bp
@@ -29,6 +30,7 @@ def create_app():
     from app.opendata.views import opendata_bp
 
     app.register_blueprint(auth_bp, url_prefix='/auth')
+    app.register_blueprint(user_bp, url_prefix='/user')
     app.register_blueprint(post_bp, url_prefix='/posts')
     app.register_blueprint(comment_bp, url_prefix='/comments')
     app.register_blueprint(save_bp, url_prefix='/saves')
