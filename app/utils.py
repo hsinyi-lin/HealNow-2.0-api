@@ -2,6 +2,8 @@ import random
 import string
 
 import openai
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.textanalytics import TextAnalyticsClient
 from flask import current_app
 from flask_mail import Message
 
@@ -41,3 +43,33 @@ def call_chatgpt(content):
     response_message = completion['choices'][0]['message']['content'].strip()
 
     return response_message
+
+
+def azure_text_analysis(content):
+    endpoint = current_app.config['AZURE_LANGUAGE_ENDPOINT']
+    key = current_app.config['AZURE_LANGUAGE_KEY']
+
+    credential = AzureKeyCredential(key)
+    text_analytics_client = TextAnalyticsClient(endpoint=endpoint, credential=credential)
+
+    response = text_analytics_client.analyze_sentiment([content], language='zh')
+
+    result = response[0]
+
+    sentiment = result.sentiment
+    scores = result.confidence_scores
+
+    if sentiment == 'positive':
+        flag = 1
+    elif sentiment == 'neutral':
+        flag = 2
+    else:
+        flag = 3
+
+    return {
+        'sentiment': flag,
+        'positive': float(scores.positive),
+        'neutral': float(scores.neutral),
+        'negative': float(scores.negative)
+    }
+

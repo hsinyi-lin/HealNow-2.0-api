@@ -110,9 +110,16 @@ class Mood(db.Model):
     email = Column(ForeignKey('user.email'), nullable=False)
     content = Column(String, nullable=False)
     ai_reply = Column(String, nullable=False)
+    positive = Column(Numeric)
+    neutral = Column(Numeric)
+    negative = Column(Numeric)
+    sentiment = Column(Integer)
     created_time = Column(DateTime, nullable=False, default=datetime.now())
 
     user = relationship('User')
+
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 
 class Post(db.Model):

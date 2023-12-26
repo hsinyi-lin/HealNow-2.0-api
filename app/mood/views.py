@@ -1,9 +1,10 @@
 from flask import Blueprint, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from sqlalchemy import desc
 
 from ..models import Mood, db
 from ..response_helpers import error_response, success_response
-from ..utils import call_chatgpt
+from ..utils import call_chatgpt, azure_text_analysis
 
 mood_bp = Blueprint('mood', __name__)
 
@@ -19,7 +20,11 @@ def add_mood():
         return error_response()
 
     ai_reply = call_chatgpt(content)
-    new_post = Mood(content=content, email=email, ai_reply=ai_reply)
+    analysis = azure_text_analysis(content)
+
+    new_post = Mood(content=content, email=email, ai_reply=ai_reply,
+                    positive=analysis['positive'], neutral=analysis['neutral'], negative=analysis['negative'],
+                    sentiment=analysis['sentiment'])
 
     db.session.add(new_post)
     db.session.commit()
@@ -48,17 +53,9 @@ def delete_mood(mood_id):
 def get_mood_list():
     email = get_jwt_identity()
 
-    moods = Mood.query.filter_by(email=email)
+    moods = Mood.query.filter_by(email=email).order_by(desc(Mood.id))
 
-    data = [
-        {
-            'id': mood.id,
-            'email': mood.email,
-            'content': mood.content,
-            'ai_reply': mood.ai_reply,
-            'created_time': mood.created_time
-        } for mood in moods
-    ]
+    moods_list = [mood.as_dict() for mood in moods]
 
-    return success_response(data=data)
+    return success_response(data=moods_list)
 

@@ -17,3 +17,6 @@ class Config:
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=60)
 
     OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
+
+    AZURE_LANGUAGE_ENDPOINT = os.environ.get('AZURE_LANGUAGE_ENDPOINT')
+    AZURE_LANGUAGE_KEY = os.environ.get('AZURE_LANGUAGE_KEY')
