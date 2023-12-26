@@ -2,6 +2,7 @@ from datetime import datetime
 
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from sqlalchemy import desc
 
 from ..models import Post, db, Comment
 from ..response_helpers import error_response, success_response
@@ -91,7 +92,7 @@ def get_post(post_id):
                 'content': comment.content,
                 'created_time': comment.created_time,
                 'updated_time': comment.updated_time
-            } for comment in Comment.query.filter_by(post_id=post_id)
+            } for comment in Comment.query.filter_by(post_id=post_id).order_by(desc(Comment.id))
         ]
     }
 
@@ -100,7 +101,7 @@ def get_post(post_id):
 
 @post_bp.route('', methods=['GET'])
 def get_all_posts():
-    posts = Post.query.all()
+    posts = Post.query.order_by(desc(Post.id)).all()
 
     posts_list = [post.as_dict() for post in posts]
 
