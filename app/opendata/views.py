@@ -29,11 +29,11 @@ def get_opendata(class_id, data_id):
 @opendata_bp.route('/<int:class_id>', methods=['GET'])
 def get_opendata_list(class_id):
     if class_id == 1:
-        data = Med.query.all()
+        data = Med.query.limit(1000).all()
     elif class_id == 2:
-        data = News.query.all()
+        data = News.query.limit(1000).all()
     elif class_id == 3:
-        data = Clarification.query.all()
+        data = Clarification.query.limit(1000).all()
     elif class_id == 4:
         data = Pharmacy.query.all()
     else:
