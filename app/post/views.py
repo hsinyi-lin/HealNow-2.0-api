@@ -1,11 +1,10 @@
-from datetime import datetime
-
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from sqlalchemy import desc
 
 from ..models import Post, db, Comment
 from ..response_helpers import error_response, success_response
+from ..utils import get_tw_time
 
 
 post_bp = Blueprint('posts', __name__)
@@ -48,7 +47,7 @@ def edit_post(post_id):
 
     post.title = title
     post.content = content
-    post.updated_time = datetime.now()
+    post.updated_time = get_tw_time()
 
     db.session.commit()
 

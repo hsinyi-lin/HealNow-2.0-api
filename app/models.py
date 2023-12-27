@@ -2,7 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import BigInteger, CHAR, Column, Date, DateTime, Float, ForeignKey, Integer, Numeric, String, Table, Text, text
 from sqlalchemy.orm import relationship
 
-from datetime import datetime
+from .utils import get_tw_time
 
 db = SQLAlchemy()
 
@@ -43,7 +43,6 @@ class Med(db.Model):
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
-
 
 
 class News(db.Model):
@@ -87,8 +86,8 @@ class User(db.Model):
     username = Column(String, nullable=False)
     gender = Column(CHAR(1), nullable=False)
     photo = Column(Text, nullable=True)
-    created_time = Column(DateTime, nullable=False, default=datetime.now())
-    updated_time = Column(DateTime, nullable=False, default=datetime.now())
+    created_time = Column(DateTime, nullable=False, default=get_tw_time())
+    updated_time = Column(DateTime, nullable=False, default=get_tw_time())
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
@@ -100,7 +99,7 @@ class Verification(db.Model):
     id = Column(Integer, primary_key=True, server_default=text("nextval('verification_id_seq'::regclass)"))
     email = Column(String, nullable=False)
     code = Column(String, nullable=False)
-    created_time = Column(DateTime, nullable=False, default=datetime.now())
+    created_time = Column(DateTime, nullable=False, default=get_tw_time())
 
 
 class Mood(db.Model):
@@ -114,7 +113,7 @@ class Mood(db.Model):
     neutral = Column(Numeric)
     negative = Column(Numeric)
     sentiment = Column(Integer)
-    created_time = Column(DateTime, nullable=False, default=datetime.now())
+    created_time = Column(DateTime, nullable=False, default=get_tw_time())
 
     user = relationship('User')
 
@@ -129,8 +128,8 @@ class Post(db.Model):
     email = Column(ForeignKey('user.email'), nullable=False)
     title = Column(String, nullable=False)
     content = Column(String, nullable=False)
-    created_time = Column(DateTime, nullable=False, default=datetime.now())
-    updated_time = Column(DateTime, nullable=False, default=datetime.now())
+    created_time = Column(DateTime, nullable=False, default=get_tw_time())
+    updated_time = Column(DateTime, nullable=False, default=get_tw_time())
 
     user = relationship('User')
 
@@ -200,8 +199,8 @@ class Comment(db.Model):
     post_id = Column(ForeignKey('post.id'), nullable=False)
     email = Column(ForeignKey('user.email'), nullable=False)
     content = Column(String, nullable=False)
-    created_time = Column(DateTime, nullable=False, default=datetime.now())
-    updated_time = Column(DateTime, nullable=False, default=datetime.now())
+    created_time = Column(DateTime, nullable=False, default=get_tw_time())
+    updated_time = Column(DateTime, nullable=False, default=get_tw_time())
 
     user = relationship('User')
     post = relationship('Post')

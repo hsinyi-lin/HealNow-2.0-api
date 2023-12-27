@@ -4,30 +4,23 @@ import string
 import openai
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient
-from flask import current_app
-from flask_mail import Message
 
-from app.models import Verification, db
+from flask import current_app
+
+from datetime import datetime, timedelta
+
+
+def get_tw_time():
+    utc_now = datetime.utcnow()
+    tw_time = utc_now + timedelta(hours=8)
+
+    return tw_time
 
 
 def generate_verification_code(length=6):
     characters = string.ascii_letters + string.digits
     code = ''.join(random.choice(characters) for _ in range(length))
     return code
-
-
-def send_verification_code(email, code):
-    mail = current_app.extensions['mail']
-
-    msg = Message('Verification Code', sender=current_app.config['MAIL_USERNAME'], recipients=[email])
-    msg.body = f'Your verification code is: {code}'
-
-    mail.send(msg)
-
-    verification = Verification(email=email, code=code)
-
-    db.session.add(verification)
-    db.session.commit()
 
 
 def call_chatgpt(content):

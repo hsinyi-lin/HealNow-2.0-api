@@ -14,6 +14,7 @@ psycopg2 = "*"
 openai = "==0.28"
 flask-cors = "*"
 azure-ai-textanalytics = "*"
+pytz = "*"
 
 [dev-packages]
 

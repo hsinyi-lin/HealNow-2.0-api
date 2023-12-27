@@ -5,6 +5,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from ..models import Comment, Post, db
 from ..response_helpers import error_response, success_response
+from ..utils import get_tw_time
 
 comment_bp = Blueprint('comments', __name__)
 
@@ -64,7 +65,7 @@ def edit_comment(comment_id):
         return error_response(msg='沒有此回覆')
 
     comment.content = content
-    comment.updated_time = datetime.now()
+    comment.updated_time = get_tw_time()
     db.session.commit()
 
     return success_response()

@@ -1,9 +1,10 @@
 from flask import Blueprint, request, jsonify
+from flask_mail import Message
 from sqlalchemy import desc
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 
-from ..models import User
+from ..models import User, Verification, db
 from ..response_helpers import error_response, success_response
 from ..utils import *
 
@@ -58,7 +59,17 @@ def send_verification():
 
     verification_code = generate_verification_code()
 
-    send_verification_code(email, verification_code)
+    mail = current_app.extensions['mail']
+
+    msg = Message('HealNow驗證碼', sender=current_app.config['MAIL_USERNAME'], recipients=[email])
+    msg.body = f'您的驗證碼為: {verification_code}'
+
+    mail.send(msg)
+
+    verification = Verification(email=email, code=verification_code)
+
+    db.session.add(verification)
+    db.session.commit()
 
     return success_response()
 
