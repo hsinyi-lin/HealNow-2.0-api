@@ -3,7 +3,7 @@ import datetime
 from flask import Blueprint, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
-from ..models import User
+from ..models import User, db
 from ..response_helpers import error_response, success_response
 from ..utils import *
 
@@ -38,8 +38,8 @@ def edit_profile():
         user.username = username
         user.gender = gender
         user.photo = photo
-        user.updated_time = datetime.datetime.now()
-        
+        user.updated_time = get_tw_time()
+
         db.session.commit()
         return success_response()
     else:
