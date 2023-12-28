@@ -51,6 +51,7 @@ def get_saved_posts_list():
         {
             'post_id': saved_post.post_id,
             'email': saved_post.email,
+            'username': saved_post.user.username,
             'title': saved_post.post.title,
             'content': saved_post.post.content,
             'created_time': saved_post.post.created_time,

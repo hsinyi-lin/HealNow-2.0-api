@@ -80,6 +80,7 @@ def get_post(post_id):
     data = {
         'id': post.id,
         'email': post.email,
+        'username': post.user.username,
         'title': post.title,
         'content': post.content,
         'created_time': post.created_time,
@@ -88,6 +89,7 @@ def get_post(post_id):
             {
                 'id': comment.id,
                 'email': comment.email,
+                'username': comment.user.username,
                 'content': comment.content,
                 'created_time': comment.created_time,
                 'updated_time': comment.updated_time

@@ -134,7 +134,9 @@ class Post(db.Model):
     user = relationship('User')
 
     def as_dict(self):
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        post_dict = {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        post_dict['username'] = self.user.username
+        return post_dict
 
 
 class SavedClarification(db.Model):
