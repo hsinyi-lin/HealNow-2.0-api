@@ -142,7 +142,7 @@ class Post(db.Model):
 class SavedClarification(db.Model):
     __tablename__ = 'saved_clarification'
 
-    id = Column(Integer, nullable=False, server_default=text("nextval('saved_post_id_seq'::regclass)"))
+    id = Column(Integer, nullable=False, server_default=text("nextval('saved_clarification_id_seq'::regclass)"))
     clarification_id = Column(ForeignKey('clarification.id'), primary_key=True, nullable=False)
     email = Column(ForeignKey('user.email'), primary_key=True, nullable=False)
 
@@ -156,7 +156,7 @@ class SavedClarification(db.Model):
 class SavedMed(db.Model):
     __tablename__ = 'saved_med'
 
-    id = Column(Integer, nullable=False, server_default=text("nextval('saved_post_id_seq'::regclass)"))
+    id = Column(Integer, nullable=False, server_default=text("nextval('saved_med_id_seq'::regclass)"))
     med_id = Column(ForeignKey('med.id'), primary_key=True, nullable=False)
     email = Column(ForeignKey('user.email'), primary_key=True, nullable=False)
 
@@ -167,16 +167,16 @@ class SavedMed(db.Model):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 
-
 class SavedNew(db.Model):
     __tablename__ = 'saved_news'
 
-    id = Column(Integer, nullable=False, server_default=text("nextval('saved_post_id_seq'::regclass)"))
+    id = Column(Integer, nullable=False, server_default=text("nextval('saved_news_id_seq'::regclass)"))
     news_id = Column(ForeignKey('news.id'), primary_key=True, nullable=False)
     email = Column(ForeignKey('user.email'), primary_key=True, nullable=False)
 
     user = relationship('User')
     news = relationship('News')
+
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
