@@ -2,7 +2,7 @@ from flask import Blueprint, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from sqlalchemy import desc
 
-from ..models import Post, db, Comment
+from ..models import Post, db, Comment, Like, SavedPost
 from ..response_helpers import error_response, success_response
 from ..utils import get_tw_time
 
@@ -83,6 +83,8 @@ def get_post(post_id):
         'username': post.user.username,
         'title': post.title,
         'content': post.content,
+        'like_cnt': Like.query.filter_by(post_id=post_id).count(),
+        'saved_cnt': SavedPost.query.filter_by(post_id=post_id).count(),
         'created_time': post.created_time,
         'updated_time': post.updated_time,
         'comment': [
@@ -109,3 +111,30 @@ def get_all_posts():
     return success_response(data=posts_list)
 
 
+@post_bp.route('/like/<int:post_id>', methods=['POST', 'DELETE'])
+@jwt_required()
+def post_like(post_id):
+    email = get_jwt_identity()
+
+    post = Post.query.get(post_id)
+
+    if not post:
+        return error_response('沒有此貼文')
+
+    like = Like.query.filter_by(post_id=post_id, email=email).first()
+
+    if request.method == 'POST':
+        if like:
+            return error_response('已按過讚')
+        new_like = Like(post_id=post_id, email=email)
+        db.session.add(new_like)
+        db.session.commit()
+
+        return success_response()
+    elif request.method == 'DELETE':
+        if not like:
+            return error_response('尚未按過讚')
+        db.session.delete(like)
+        db.session.commit()
+
+        return success_response()

@@ -182,6 +182,16 @@ class SavedNew(db.Model):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 
+class Like(db.Model):
+    __tablename__ = 'like'
+
+    id = Column(Integer, nullable=False, server_default=text("nextval('like_id_seq'::regclass)"))
+    post_id = Column(ForeignKey('post.id'), primary_key=True, nullable=False)
+    email = Column(ForeignKey('user.email'), primary_key=True, nullable=False)
+
+    user = relationship('User')
+    post = relationship('Post')
+
 
 class SavedPost(db.Model):
     __tablename__ = 'saved_post'
