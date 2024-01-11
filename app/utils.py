@@ -1,3 +1,4 @@
+import datetime
 import random
 import string
 
@@ -6,6 +7,13 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient
 
 from flask import current_app
+
+
+def current_time():
+    now = datetime.datetime.now()
+    new_time = now + datetime.timedelta(hours=8)
+
+    return new_time
 
 
 def generate_verification_code(length=6):
