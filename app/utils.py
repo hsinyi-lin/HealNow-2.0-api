@@ -7,15 +7,6 @@ from azure.ai.textanalytics import TextAnalyticsClient
 
 from flask import current_app
 
-from datetime import datetime, timedelta
-
-
-def get_tw_time():
-    utc_now = datetime.utcnow()
-    tw_time = utc_now + timedelta(hours=8)
-
-    return tw_time
-
 
 def generate_verification_code(length=6):
     characters = string.ascii_letters + string.digits

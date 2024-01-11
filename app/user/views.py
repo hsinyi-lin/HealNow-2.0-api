@@ -5,7 +5,6 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from ..models import User, db
 from ..response_helpers import error_response, success_response
-from ..utils import *
 
 
 user_bp = Blueprint('user', __name__)
@@ -38,7 +37,7 @@ def edit_profile():
         user.username = username
         user.gender = gender
         user.photo = photo
-        user.updated_time = get_tw_time()
+        user.updated_time = datetime.datetime.now()
 
         db.session.commit()
         return success_response()

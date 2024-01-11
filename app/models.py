@@ -1,8 +1,8 @@
+import datetime
+
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import BigInteger, CHAR, Column, Date, DateTime, Float, ForeignKey, Integer, Numeric, String, Table, Text, text
 from sqlalchemy.orm import relationship
-
-from .utils import get_tw_time
 
 db = SQLAlchemy()
 
@@ -86,8 +86,8 @@ class User(db.Model):
     username = Column(String, nullable=False)
     gender = Column(CHAR(1), nullable=False)
     photo = Column(Text, nullable=True)
-    created_time = Column(DateTime, nullable=False, default=get_tw_time())
-    updated_time = Column(DateTime, nullable=False, default=get_tw_time())
+    created_time = Column(DateTime, nullable=False, default=datetime.datetime.now())
+    updated_time = Column(DateTime, nullable=False, default=datetime.datetime.now())
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
@@ -99,7 +99,7 @@ class Verification(db.Model):
     id = Column(Integer, primary_key=True, server_default=text("nextval('verification_id_seq'::regclass)"))
     email = Column(String, nullable=False)
     code = Column(String, nullable=False)
-    created_time = Column(DateTime, nullable=False, default=get_tw_time())
+    created_time = Column(DateTime, nullable=False, default=datetime.datetime.now())
 
 
 class Mood(db.Model):
@@ -113,7 +113,7 @@ class Mood(db.Model):
     neutral = Column(Numeric)
     negative = Column(Numeric)
     sentiment = Column(Integer)
-    created_time = Column(DateTime, nullable=False, default=get_tw_time())
+    created_time = Column(DateTime, nullable=False, default=datetime.datetime.now())
 
     user = relationship('User')
 
@@ -128,8 +128,8 @@ class Post(db.Model):
     email = Column(ForeignKey('user.email'), nullable=False)
     title = Column(String, nullable=False)
     content = Column(String, nullable=False)
-    created_time = Column(DateTime, nullable=False, default=get_tw_time())
-    updated_time = Column(DateTime, nullable=False, default=get_tw_time())
+    created_time = Column(DateTime, nullable=False, default=datetime.datetime.now())
+    updated_time = Column(DateTime, nullable=False, default=datetime.datetime.now())
 
     user = relationship('User')
 
@@ -192,6 +192,9 @@ class Like(db.Model):
     user = relationship('User')
     post = relationship('Post')
 
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 
 class SavedPost(db.Model):
     __tablename__ = 'saved_post'
@@ -207,12 +210,12 @@ class SavedPost(db.Model):
 class Comment(db.Model):
     __tablename__ = 'comment'
 
-    id = Column(Integer, primary_key=True, server_default=text("nextval('newtable_id_seq'::regclass)"))
+    id = Column(Integer, primary_key=True, server_default=text("nextval('comment_id_seq'::regclass)"))
     post_id = Column(ForeignKey('post.id'), nullable=False)
     email = Column(ForeignKey('user.email'), nullable=False)
     content = Column(String, nullable=False)
-    created_time = Column(DateTime, nullable=False, default=get_tw_time())
-    updated_time = Column(DateTime, nullable=False, default=get_tw_time())
+    created_time = Column(DateTime, nullable=False, default=datetime.datetime.now())
+    updated_time = Column(DateTime, nullable=False, default=datetime.datetime.now())
 
     user = relationship('User')
     post = relationship('Post')
