@@ -1,6 +1,6 @@
 # 🏥 HealNow API - Backend Service
 
-📌 Overview
+## 📌 Overview
 
 HealNow API is the backend service powering the HealNow app, a smart health companion providing quick access to health information, real-time assistance, and personalized health care. This API handles authentication, data management, and service integrations.
 
