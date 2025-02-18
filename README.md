@@ -1,4 +1,4 @@
-🏥 HealNow API - Backend Service
+# 🏥 HealNow API - Backend Service
 
 📌 Overview
 
